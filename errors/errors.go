@@ -1,3 +1,6 @@
+/*
+Package errors provides errors with stack trace.
+*/
 package errors
 
 import (
@@ -8,34 +11,50 @@ import (
 
 const stackBufSize = 1024
 
+// ErrorWithStack is an interface that has Stack method to provide stack trace of en error.
+// The format of stack should be same as runtime.Stack.
+// See https://pkg.go.dev/runtime#Stack.
 type ErrorWithStack interface {
 	Stack() []byte
 }
 
+// New returns an error with stack.
 func New(text string) error {
 	return newWithStack(errors.New(text))
 }
 
+// NewWithoutStack returns an error without stack.
 func NewWithoutStack(text string) error {
 	return errors.New(text)
 }
 
+// As is the same as errors.As.
+// See https://pkg.go.dev/errors#As.
 func As(err error, target any) bool {
 	return errors.As(err, target)
 }
 
+// Is is the same as errors.Is.
+// See https://pkg.go.dev/errors#Is.
 func Is(err, target error) bool {
 	return errors.Is(err, target)
 }
 
+// Join is the same as errors.Join.
+// See https://pkg.go.dev/errors#Join.
 func Join(errs ...error) error {
 	return errors.Join(errs...)
 }
 
+// Unwrap is the same as errors.Unwrap.
+// See https://pkg.go.dev/errors#Unwrap.
 func Unwrap(err error) error {
 	return errors.Unwrap(err)
 }
 
+// Errorf returns an error with stack.
+// %w can be used as well as fmt.Errorf.
+// See https://pkg.go.dev/fmt#Errorf.
 func Errorf(format string, args ...any) error {
 	if hasStack(args...) {
 		return fmt.Errorf(format, args...)
@@ -44,10 +63,14 @@ func Errorf(format string, args ...any) error {
 	return newWithStack(fmt.Errorf(format, args...))
 }
 
+// ErrorfWithoutStack returns an error without stack.
+// %w can be used as well as fmt.Errorf.
+// See https://pkg.go.dev/fmt#Errorf.
 func ErrorfWithoutStack(format string, a ...any) error {
 	return fmt.Errorf(format, a...)
 }
 
+// WithStack just wrap the given error with stack.
 func WithStack(err error) error {
 	if err == nil {
 		return nil
