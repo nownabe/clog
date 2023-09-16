@@ -16,6 +16,7 @@ const stackBufSize = 1024
 // See https://pkg.go.dev/runtime#Stack.
 type ErrorWithStack interface {
 	Stack() []byte
+	Error() string
 }
 
 // New returns an error with stack.
