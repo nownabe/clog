@@ -29,7 +29,7 @@ type writer struct {
 	*bytes.Buffer
 }
 
-func (w *writer) assertEqual(t *testing.T, want map[string]any) {
+func (w *writer) assertLog(t *testing.T, want map[string]any) {
 	t.Helper()
 
 	written, err := w.ReadBytes('\n')
@@ -270,7 +270,7 @@ func TestLogger_SimpleLogFuncs(t *testing.T) {
 
 				fn, w := getFn(tc.loggerSeverity)
 				fn(ctx, tc.msg, tc.args...)
-				w.assertEqual(t, tc.want)
+				w.assertLog(t, tc.want)
 			})
 		}
 	}
@@ -397,7 +397,7 @@ func TestLogger_FormattingLogFuncs(t *testing.T) {
 
 				fn, w := getFn(tc.loggerSeverity)
 				fn(ctx, tc.msg, tc.args...)
-				w.assertEqual(t, tc.want)
+				w.assertLog(t, tc.want)
 			})
 		}
 	}
@@ -547,7 +547,7 @@ func TestLogger_ErrorLogFuncs(t *testing.T) {
 
 				fn, w := getFn(tc.loggerSeverity)
 				fn(ctx, tc.err, tc.args...)
-				w.assertEqual(t, tc.want)
+				w.assertLog(t, tc.want)
 			})
 		}
 	}
@@ -605,17 +605,17 @@ func TestLogger_Enabled(t *testing.T) {
 func TestLogger_Log(t *testing.T) {
 	l, w := newLogger(clog.SeverityInfo)
 	l.Log(context.Background(), clog.SeverityInfo, "msg", "k1", "v1")
-	w.assertEqual(t, buildWantLog("INFO", "msg", "k1", "v1"))
+	w.assertLog(t, buildWantLog("INFO", "msg", "k1", "v1"))
 }
 
 func TestLogger_With(t *testing.T) {
 	l, w := newLogger(clog.SeverityInfo)
 	l.With("k1", "v1").Info(context.Background(), "msg", "k2", "v2")
-	w.assertEqual(t, buildWantLog("INFO", "msg", "k1", "v1", "k2", "v2"))
+	w.assertLog(t, buildWantLog("INFO", "msg", "k1", "v1", "k2", "v2"))
 }
 
 func TestLogger_WithInsertID(t *testing.T) {
 	l, w := newLogger(clog.SeverityInfo)
 	l.WithInsertID("id").Info(context.Background(), "msg")
-	w.assertEqual(t, buildWantLog("INFO", "msg", "logging.googleapis.com/insertId", "id"))
+	w.assertLog(t, buildWantLog("INFO", "msg", "logging.googleapis.com/insertId", "id"))
 }

@@ -71,7 +71,7 @@ func Test_HTTPRequest(t *testing.T) {
 
 			l, w := newLogger(clog.SeverityInfo)
 			l.WithHTTPRequest(tt.r).Info(ctx, msg)
-			w.assertEqual(t, tt.want)
+			w.assertLog(t, tt.want)
 		})
 	}
 }

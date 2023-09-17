@@ -27,5 +27,5 @@ func Test_sourceLocation(t *testing.T) {
 		"function": frame.Function,
 	}
 
-	w.assertEqual(t, want)
+	w.assertLog(t, want)
 }
