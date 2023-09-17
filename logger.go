@@ -174,6 +174,12 @@ func (l *Logger) With(args ...any) *Logger {
 	return &Logger{l.inner.With(args...)}
 }
 
+// WithHTTPRequest returns a Logger that includes the given httpRequest in each output operation.
+// See https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#HttpRequest
+func (l *Logger) WithHTTPRequest(req *HTTPRequest) *Logger {
+	return l.withAttrs(slog.Any(keys.HTTPRequest, req))
+}
+
 func (l *Logger) log(ctx context.Context, s Severity, msg string, args ...any) {
 	// skip [runtime.Callers, source, this function, clog exported function]
 	src := getSourceLocation(4)
@@ -184,6 +190,10 @@ func (l *Logger) logAttrs(ctx context.Context, s Severity, msg string, attrs ...
 	// skip [runtime.Callers, source, this function, clog exported function]
 	src := getSourceLocation(4)
 	l.logAttrsWithSource(ctx, s, src, msg, attrs...)
+}
+
+func (l *Logger) withAttrs(attrs ...slog.Attr) *Logger {
+	return &Logger{slog.New(l.inner.Handler().WithAttrs(attrs))}
 }
 
 func (l *Logger) err(ctx context.Context, s Severity, err error, args ...any) {
