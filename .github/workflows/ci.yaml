@@ -1,0 +1,38 @@
+---
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        version: ["1.21"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.version }}
+      - run: go mod download
+      - run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
+      # - uses: codecov/codecov-action@v3
+      #   env:
+      #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  golangci-lint:
+    strategy:
+      matrix:
+        version: ["1.21"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.version }}
+      - uses: golangci/golangci-lint-action@v3
+        with:
+          skip-cache: true
