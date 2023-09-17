@@ -12,7 +12,8 @@ See following links.
 https://github.com/googleapis/googleapis/blob/master/google/logging/type/log_severity.proto
 https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#LogSeverity
 
-Though these packages provide predefined severity constants, we don't use them not to depend on external package just for it.
+Though these packages provide predefined severity constants,
+we don't use them not to depend on external package just for it.
 https://pkg.go.dev/google.golang.org/genproto/googleapis/logging/type#LogSeverity
 https://pkg.go.dev/cloud.google.com/go/logging#Severity
 */

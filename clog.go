@@ -18,5 +18,9 @@ func SetDefault(l *Logger) {
 
 // Default returns the default Logger.
 func Default() *Logger {
-	return defaultLogger.Load().(*Logger)
+	l, ok := defaultLogger.Load().(*Logger)
+	if !ok {
+		panic("clog: default logger is not *Logger")
+	}
+	return l
 }

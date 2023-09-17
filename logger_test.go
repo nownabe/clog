@@ -159,6 +159,8 @@ var severities = []clog.Severity{
 }
 
 func TestLogger_SimpleLogFuncs(t *testing.T) {
+	t.Parallel()
+
 	type logFn func(ctx context.Context, msg string, args ...any)
 
 	tests := map[string]struct {
@@ -286,6 +288,8 @@ func TestLogger_SimpleLogFuncs(t *testing.T) {
 }
 
 func TestLogger_FormattingLogFuncs(t *testing.T) {
+	t.Parallel()
+
 	type logFn func(ctx context.Context, format string, a ...any)
 
 	tests := map[string]struct {
@@ -413,6 +417,8 @@ func TestLogger_FormattingLogFuncs(t *testing.T) {
 }
 
 func TestLogger_ErrorLogFuncs(t *testing.T) {
+	t.Parallel()
+
 	type logFn func(ctx context.Context, err error, args ...any)
 
 	tests := map[string]struct {
@@ -563,6 +569,8 @@ func TestLogger_ErrorLogFuncs(t *testing.T) {
 }
 
 func TestLogger_Enabled(t *testing.T) {
+	t.Parallel()
+
 	tests := map[string]struct {
 		loggerSeverity clog.Severity
 		arg            clog.Severity
@@ -612,18 +620,24 @@ func TestLogger_Enabled(t *testing.T) {
 }
 
 func TestLogger_Log(t *testing.T) {
+	t.Parallel()
+
 	l, w := newLogger(clog.SeverityInfo)
 	l.Log(context.Background(), clog.SeverityInfo, "msg", "k1", "v1")
 	w.assertLog(t, buildWantLog("INFO", "msg", "k1", "v1"))
 }
 
 func TestLogger_With(t *testing.T) {
+	t.Parallel()
+
 	l, w := newLogger(clog.SeverityInfo)
 	l.With("k1", "v1").Info(context.Background(), "msg", "k2", "v2")
 	w.assertLog(t, buildWantLog("INFO", "msg", "k1", "v1", "k2", "v2"))
 }
 
 func TestLogger_WithInsertID(t *testing.T) {
+	t.Parallel()
+
 	l, w := newLogger(clog.SeverityInfo)
 	l.WithInsertID("id").Info(context.Background(), "msg")
 	w.assertLog(t, buildWantLog("INFO", "msg", "logging.googleapis.com/insertId", "id"))

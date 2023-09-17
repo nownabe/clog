@@ -22,7 +22,9 @@ func StartOperation(ctx context.Context, s Severity, msg, id, producer string) (
 
 // StartOperation returns a new context and a function to end the opration, starting the operation.
 // See https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#LogEntryOperation
-func (l *Logger) StartOperation(ctx context.Context, s Severity, msg, id, producer string) (context.Context, func(msg string)) {
+func (l *Logger) StartOperation(
+	ctx context.Context, s Severity, msg, id, producer string,
+) (context.Context, func(msg string)) {
 	l.logAttrs(ctx, s, msg, slog.Group(keys.Operation, "id", id, "producer", producer, "first", true))
 
 	opCtx := context.WithValue(ctx, ctxKeyOperation{}, &operation{id, producer})

@@ -6,9 +6,13 @@ import "log/slog"
 // cf. https://cs.opensource.google/go/go/+/refs/tags/go1.21.1:src/log/slog/handler.go;l=279
 func replaceLevel(a slog.Attr) slog.Attr {
 	if a.Key == slog.LevelKey {
-		l := a.Value.Any().(slog.Level)
 		a.Key = "severity"
-		a.Value = slog.StringValue(severityString(l))
+
+		if l, ok := a.Value.Any().(slog.Level); ok {
+			a.Value = slog.StringValue(severityString(l))
+		} else {
+			a.Value = slog.StringValue(severityString(SeverityDefault))
+		}
 	}
 
 	return a

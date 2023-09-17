@@ -16,7 +16,8 @@ type Logger struct {
 
 func New(w io.Writer, s Severity, json bool, opts ...Option) *Logger {
 	opt := &slog.HandlerOptions{
-		Level: s,
+		AddSource: false,
+		Level:     s,
 		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
 			a = replaceLevel(a)
 			a = replaceMessage(a)
@@ -231,7 +232,9 @@ func (l *Logger) logWithSource(ctx context.Context, s Severity, src *sourceLocat
 	l.inner.Log(ctx, s, msg, args...)
 }
 
-func (l *Logger) logAttrsWithSource(ctx context.Context, s Severity, src *sourceLocation, msg string, attrs ...slog.Attr) {
+func (l *Logger) logAttrsWithSource(
+	ctx context.Context, s Severity, src *sourceLocation, msg string, attrs ...slog.Attr,
+) {
 	attrs = append(attrs, slog.Any(keys.SourceLocation, src))
 	l.inner.LogAttrs(ctx, s, msg, attrs...)
 }
@@ -247,10 +250,10 @@ func argsToAttrs(args []any) []slog.Attr {
 			if len(args) == 1 {
 				attrs = append(attrs, slog.String(badKey, x))
 				break
-			} else {
-				attrs = append(attrs, slog.Any(x, args[1]))
-				args = args[2:]
 			}
+
+			attrs = append(attrs, slog.Any(x, args[1]))
+			args = args[2:]
 		case slog.Attr:
 			attrs = append(attrs, x)
 			args = args[1:]

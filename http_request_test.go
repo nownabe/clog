@@ -9,6 +9,8 @@ import (
 )
 
 func Test_HTTPRequest(t *testing.T) {
+	t.Parallel()
+
 	sev := "INFO"
 	msg := "msg"
 
