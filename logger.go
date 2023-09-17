@@ -32,6 +32,8 @@ func New(w io.Writer, s Severity, json bool, opts ...Option) *Logger {
 	}
 
 	h = newLabelsHandler(h)
+	h = newOperationHandler(h)
+
 	for _, o := range opts {
 		h = o.apply(h)
 	}

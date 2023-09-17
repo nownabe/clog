@@ -14,8 +14,9 @@ import (
 )
 
 const (
-	keySourceLocation = "logging.googleapis.com/sourceLocation"
 	keyLabels         = "logging.googleapis.com/labels"
+	keyOperation      = "logging.googleapis.com/operation"
+	keySourceLocation = "logging.googleapis.com/sourceLocation"
 )
 
 type (

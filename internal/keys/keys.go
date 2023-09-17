@@ -10,6 +10,7 @@ const (
 	HTTPRequest    = "httpRequest"
 	InsertID       = apiPrefix + "insertId"
 	Labels         = apiPrefix + "labels"
+	Operation      = apiPrefix + "operation"
 	Severity       = "severity"
 	SourceLocation = apiPrefix + "sourceLocation"
 	StackTrace     = "stack_trace"
