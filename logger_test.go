@@ -102,6 +102,15 @@ func assertEqual(t *testing.T, want, got map[string]any) {
 			} else {
 				t.Errorf("got[%q] got %#v (%T), want bool value %t: %#v", k, gotRawVal, gotRawVal, wantVal, got)
 			}
+		case int:
+			// json.Unmarshal converts numbers to float64.
+			if gotVal, ok := gotRawVal.(float64); ok {
+				if float64(wantVal) != gotVal {
+					t.Errorf("got[%q] got %f, want %d: %#v", k, gotVal, wantVal, got)
+				}
+			} else {
+				t.Errorf("got[%q] got %#v (%T), want int value %d: %#v", k, gotRawVal, gotRawVal, wantVal, got)
+			}
 		default:
 			panic(fmt.Sprintf("unexpected want value %#v (%T)", wantVal, wantVal))
 		}
