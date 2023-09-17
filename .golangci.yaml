@@ -55,3 +55,6 @@ issues:
     - path: level\.go
       linters:
         - exhaustive
+    - path: source_location\.go
+      linters:
+        - unparam

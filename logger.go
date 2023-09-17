@@ -194,6 +194,14 @@ func (l *Logger) WithInsertID(id string) *Logger {
 	return l.withAttrs(slog.String(keys.InsertID, id))
 }
 
+// StartOperation returns a new context and a function to end the opration, starting the operation.
+// See https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#LogEntryOperation
+func (l *Logger) StartOperation(
+	ctx context.Context, s Severity, msg, id, producer string,
+) (context.Context, func(msg string)) {
+	return l.startOperation(ctx, s, msg, id, producer)
+}
+
 func (l *Logger) log(ctx context.Context, s Severity, msg string, args ...any) {
 	// skip [runtime.Callers, source, this function, clog exported function]
 	src := getSourceLocation(4)
@@ -204,6 +212,21 @@ func (l *Logger) logAttrs(ctx context.Context, s Severity, msg string, attrs ...
 	// skip [runtime.Callers, source, this function, clog exported function]
 	src := getSourceLocation(4)
 	l.logAttrsWithSource(ctx, s, src, msg, attrs...)
+}
+
+func (l *Logger) startOperation(
+	ctx context.Context, s Severity, msg, id, producer string,
+) (context.Context, func(msg string)) {
+	// skip [runtime.Callers, getSourceLocation, this function, exported function]
+	src := getSourceLocation(4)
+
+	l.logAttrsWithSource(ctx, s, src, msg, slog.Group(keys.Operation, "id", id, "producer", producer, "first", true))
+
+	opCtx := context.WithValue(ctx, ctxKeyOperation{}, &operation{id, producer})
+
+	return opCtx, func(msg string) {
+		l.logAttrsWithSource(ctx, s, src, msg, slog.Group(keys.Operation, "id", id, "producer", producer, "last", true))
+	}
 }
 
 func (l *Logger) withAttrs(attrs ...slog.Attr) *Logger {
