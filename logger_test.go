@@ -50,7 +50,7 @@ func assertEqual(t *testing.T, want, got map[string]any) {
 	}
 
 	for k, wantVal := range want {
-		gotVal, ok := got[k]
+		gotRawVal, ok := got[k]
 		if !ok {
 			t.Errorf("got[%q] not found: %+v", k, got)
 		}
@@ -59,42 +59,42 @@ func assertEqual(t *testing.T, want, got map[string]any) {
 		case anyVal:
 			continue
 		case anyString:
-			if _, ok := gotVal.(string); !ok {
-				t.Errorf("got[%q] got %#v (%T), want string value: %#v", k, gotVal, gotVal, got)
+			if _, ok := gotRawVal.(string); !ok {
+				t.Errorf("got[%q] got %#v (%T), want string value: %#v", k, gotRawVal, gotRawVal, got)
 			}
 		case anyNonNil:
-			if gotVal == nil {
+			if gotRawVal == nil {
 				t.Errorf("got[%q] got nil, want non-nil value: %#v", k, got)
 			}
 		case map[string]any:
-			if gotMap, ok := gotVal.(map[string]any); ok {
+			if gotMap, ok := gotRawVal.(map[string]any); ok {
 				assertEqual(t, wantVal, gotMap)
 			} else {
-				t.Errorf("got[%q] got %#v (%T), want map[string]any value: %#v", k, gotVal, gotVal, got)
+				t.Errorf("got[%q] got %#v (%T), want map[string]any value: %#v", k, gotRawVal, gotRawVal, got)
 			}
 		case *regexp.Regexp:
-			if gotVal, ok := gotVal.(string); ok {
+			if gotVal, ok := gotRawVal.(string); ok {
 				if !wantVal.MatchString(gotVal) {
 					t.Errorf("got[%q] got %q, want match regexp %v: %#v", k, gotVal, wantVal, got)
 				}
 			} else {
-				t.Errorf("got[%q] got %#v (%T), want string and should match %v: %#v", k, gotVal, gotVal, wantVal, got)
+				t.Errorf("got[%q] got %#v (%T), want string and should match %v: %#v", k, gotRawVal, gotVal, wantVal, got)
 			}
 		case string:
-			if gotVal, ok := gotVal.(string); ok {
+			if gotVal, ok := gotRawVal.(string); ok {
 				if wantVal != gotVal {
 					t.Errorf("got[%q] got %q, want %q: %#v", k, gotVal, wantVal, got)
 				}
 			} else {
-				t.Errorf("got[%q] got %#v (%T), want string value %q: %#v", k, gotVal, gotVal, wantVal, got)
+				t.Errorf("got[%q] got %#v (%T), want string value %q: %#v", k, gotRawVal, gotRawVal, wantVal, got)
 			}
 		case bool:
-			if gotVal, ok := gotVal.(bool); ok {
+			if gotVal, ok := gotRawVal.(bool); ok {
 				if wantVal != gotVal {
 					t.Errorf("got[%q] got %t, want %t: %#v", k, gotVal, wantVal, got)
 				}
 			} else {
-				t.Errorf("got[%q] got %#v (%T), want bool value %t: %#v", k, gotVal, gotVal, wantVal, got)
+				t.Errorf("got[%q] got %#v (%T), want bool value %t: %#v", k, gotRawVal, gotRawVal, wantVal, got)
 			}
 		default:
 			panic(fmt.Sprintf("unexpected want value %#v (%T)", wantVal, wantVal))
