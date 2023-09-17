@@ -180,6 +180,12 @@ func (l *Logger) WithHTTPRequest(req *HTTPRequest) *Logger {
 	return l.withAttrs(slog.Any(keys.HTTPRequest, req))
 }
 
+// WithInsertID returns a Logger that includes the given insertId in each output operation.
+// See https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry
+func (l *Logger) WithInsertID(id string) *Logger {
+	return l.withAttrs(slog.String(keys.InsertID, id))
+}
+
 func (l *Logger) log(ctx context.Context, s Severity, msg string, args ...any) {
 	// skip [runtime.Callers, source, this function, clog exported function]
 	src := getSourceLocation(4)

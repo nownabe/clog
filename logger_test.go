@@ -609,3 +609,9 @@ func TestLogger_With(t *testing.T) {
 	l.With("k1", "v1").Info(context.Background(), "msg", "k2", "v2")
 	w.assertEqual(t, buildWantLog("INFO", "msg", "k1", "v1", "k2", "v2"))
 }
+
+func TestLogger_WithInsertID(t *testing.T) {
+	l, w := newLogger(clog.SeverityInfo)
+	l.WithInsertID("id").Info(context.Background(), "msg")
+	w.assertEqual(t, buildWantLog("INFO", "msg", "logging.googleapis.com/insertId", "id"))
+}
