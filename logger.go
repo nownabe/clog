@@ -14,7 +14,7 @@ type Logger struct {
 	inner *slog.Logger
 }
 
-func New(w io.Writer, s Severity, json bool) *Logger {
+func New(w io.Writer, s Severity, json bool, opts ...Option) *Logger {
 	opt := &slog.HandlerOptions{
 		Level: s,
 		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
@@ -29,6 +29,11 @@ func New(w io.Writer, s Severity, json bool) *Logger {
 		h = slog.NewJSONHandler(w, opt)
 	} else {
 		h = slog.NewTextHandler(w, opt)
+	}
+
+	h = newLabelsHandler(h)
+	for _, o := range opts {
+		h = o.apply(h)
 	}
 
 	return &Logger{slog.New(h)}

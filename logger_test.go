@@ -13,6 +13,11 @@ import (
 	"github.com/nownabe/clog/errors"
 )
 
+const (
+	keySourceLocation = "logging.googleapis.com/sourceLocation"
+	keyLabels         = "logging.googleapis.com/labels"
+)
+
 type (
 	anyVal    struct{}
 	anyString struct{}
@@ -102,12 +107,10 @@ func assertEqual(t *testing.T, want, got map[string]any) {
 	}
 }
 
-func newLogger(s clog.Severity) (*clog.Logger, *writer) {
+func newLogger(s clog.Severity, opts ...clog.Option) (*clog.Logger, *writer) {
 	w := &writer{&bytes.Buffer{}}
-	return clog.New(w, s, true), w
+	return clog.New(w, s, true, opts...), w
 }
-
-const keySourceLocation = "logging.googleapis.com/sourceLocation"
 
 var (
 	timeRE         = regexp.MustCompile(`^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}`)
