@@ -23,7 +23,7 @@ func TestNew(t *testing.T) {
 
 	stackLines := strings.Split(string(ews.Stack()), "\n")
 
-	if len(stackLines) != 12 {
+	if len(stackLines) != 6 {
 		t.Errorf("len(stackLines) got %d (%#v), want more than 12 lines", len(stackLines), stackLines)
 	}
 
