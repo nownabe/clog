@@ -53,7 +53,7 @@ issues:
     - path: errors/errors_test\.go
       linters:
         - gocritic
-    - path: level\.go
+    - path: severity\.go
       linters:
         - exhaustive
     - path: source_location\.go
