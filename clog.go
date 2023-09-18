@@ -10,7 +10,7 @@ import (
 var defaultLogger atomic.Value
 
 func init() {
-	defaultLogger.Store(New(os.Stdout, SeverityInfo, false))
+	defaultLogger.Store(New(os.Stdout, SeverityInfo, true))
 }
 
 // SetDefault makes l the default Logger.
