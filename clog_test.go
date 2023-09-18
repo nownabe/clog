@@ -3,6 +3,7 @@ package clog_test
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"runtime"
 	"strconv"
 	"testing"
@@ -696,4 +697,23 @@ func TestDefaultLogger_Trace(t *testing.T) {
 		keySpanID, spanIDStr,
 		keyTrace, fmt.Sprintf("projects/%s/traces/%s", projectID, traceIDStr),
 		keyTraceSampled, true))
+}
+
+func TestDefaultLogger_WithHandleFunc(t *testing.T) {
+	type ctxkey struct{}
+
+	f := func(next clog.HandleFunc) clog.HandleFunc {
+		return (func(ctx context.Context, r slog.Record) error {
+			if userID, ok := ctx.Value(ctxkey{}).(string); ok {
+				r.AddAttrs(slog.String("user_id", userID))
+			}
+			return next(ctx, r)
+		})
+	}
+
+	w := setDefault(clog.SeverityInfo, clog.WithHandleFunc(f))
+
+	ctx := context.WithValue(context.Background(), ctxkey{}, "user1")
+	clog.Info(ctx, "msg1")
+	w.assertLog(t, buildWantLog("INFO", "msg1", "user_id", "user1"))
 }
