@@ -20,9 +20,9 @@ jobs:
           go-version: ${{ matrix.version }}
       - run: go mod download
       - run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
-      # - uses: codecov/codecov-action@v3
-      #   env:
-      #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   golangci-lint:
     strategy:
       matrix:
