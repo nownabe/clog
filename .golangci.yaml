@@ -50,6 +50,11 @@ issues:
         - forcetypeassert
         - funlen
         - gocognit
+        - testableexamples
+    - path: example.*_test\.go
+      linters:
+        - errcheck
+        - lll
     - path: errors/errors_test\.go
       linters:
         - gocritic

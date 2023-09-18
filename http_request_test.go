@@ -77,3 +77,24 @@ func Test_HTTPRequest(t *testing.T) {
 		})
 	}
 }
+
+func ExampleWithHTTPRequest() {
+	req := &clog.HTTPRequest{
+		RequestMethod:                  "GET",
+		RequestURL:                     "https://example.com/foo",
+		RequestSize:                    123,
+		Status:                         200,
+		ResponseSize:                   456,
+		UserAgent:                      "clog",
+		RemoteIP:                       "203.0.113.1",
+		ServerIP:                       "203.0.113.2",
+		Referer:                        "https://example.com/referer",
+		Latency:                        123*time.Second + 456*time.Nanosecond,
+		CacheLookup:                    true,
+		CacheHit:                       true,
+		CacheValidatedWithOriginServer: true,
+		CacheFillBytes:                 789,
+		Protocol:                       "HTTP/1.1",
+	}
+	clog.WithHTTPRequest(req).Info(context.Background(), "GET /foo")
+}
