@@ -7,7 +7,7 @@ import (
 
 	"go.opentelemetry.io/otel/trace"
 
-	"github.com/nownabe/clog/internal/keys"
+	"go.nownabe.dev/clog/internal/keys"
 )
 
 // WithTrace returns an Option that sets the trace attributes to the log record.

@@ -11,8 +11,8 @@ import (
 
 	"go.opentelemetry.io/otel/trace"
 
-	"github.com/nownabe/clog"
-	"github.com/nownabe/clog/errors"
+	"go.nownabe.dev/clog"
+	"go.nownabe.dev/clog/errors"
 )
 
 func setDefault(s clog.Severity, opts ...clog.Option) *writer {

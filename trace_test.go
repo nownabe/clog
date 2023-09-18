@@ -7,7 +7,7 @@ import (
 
 	"go.opentelemetry.io/otel/trace"
 
-	"github.com/nownabe/clog"
+	"go.nownabe.dev/clog"
 )
 
 func Test_Trace(t *testing.T) {

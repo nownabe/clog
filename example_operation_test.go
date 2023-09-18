@@ -3,7 +3,7 @@ package clog_test
 import (
 	"context"
 
-	"github.com/nownabe/clog"
+	"go.nownabe.dev/clog"
 )
 
 func DoLongRunningOperation(ctx context.Context) {

@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/nownabe/clog"
+	"go.nownabe.dev/clog"
 )
 
 func Test_Operation(t *testing.T) {

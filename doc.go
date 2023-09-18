@@ -58,4 +58,4 @@ See [Examples] for more details.
 [Cloud Logging documentation]: https://cloud.google.com/logging/docs/structured-logging
 [Cloud Error Reporting documentation]: https://cloud.google.com/error-reporting/docs/formatting-error-messages
 */
-package clog
+package clog // import "go.nownabe.dev/clog"

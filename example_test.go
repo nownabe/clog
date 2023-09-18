@@ -10,8 +10,8 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 
-	"github.com/nownabe/clog"
-	"github.com/nownabe/clog/errors"
+	"go.nownabe.dev/clog"
+	"go.nownabe.dev/clog/errors"
 )
 
 type ctxUserIDKey struct{}
@@ -70,7 +70,7 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 	     "severity": "INFO",
 	     "message": "request received",
 	     "logging.googleapis.com/sourceLocation": {
-	       "file": "github.com/nownabe/clog/example_test.go",
+	       "file": "go.nownabe.dev/clog/example_test.go",
 	       "line": "66",
 	       "function": "main.RequestHandler"
 	     },
@@ -95,9 +95,9 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 		     "time": "2023-09-18T21:14:02.980412394+09:00",
 		     "severity": "ERROR",
 		     "message": "something went wrong",
-		     "stack_trace": "something went wrong\n\ngoroutine 0 [running]:\nmain.RequestHandler(...)\n\tgithub.com/nownabe/clog/example_test.go:90\nnet/http.HandlerFunc.ServeHTTP(...)\n\tnet/http/server.go:2136\nmain.Example(...)\n\tgithub.com/nownabe/clog/example_test.go:135\nmain.main(...)\n\tgithub.com/nownabe/clog/main.go:20\nruntime.main(...)\n\truntime/proc.go:267\n",
+		     "stack_trace": "something went wrong\n\ngoroutine 0 [running]:\nmain.RequestHandler(...)\n\tgo.nownabe.dev/clog/example_test.go:90\nnet/http.HandlerFunc.ServeHTTP(...)\n\tnet/http/server.go:2136\nmain.Example(...)\n\tgo.nownabe.dev/clog/example_test.go:135\nmain.main(...)\n\tgo.nownabe.dev/clog/main.go:20\nruntime.main(...)\n\truntime/proc.go:267\n",
 		     "logging.googleapis.com/sourceLocation": {
-		       "file": "github.com/nownabe/clog/example_test.go",
+		       "file": "go.nownabe.dev/clog/example_test.go",
 		       "line": "92",
 		       "function": "main.RequestHandler"
 		     },
@@ -120,7 +120,7 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 		     "severity": "INFO",
 		     "message": "request processed",
 		     "logging.googleapis.com/sourceLocation": {
-		       "file": "github.com/nownabe/clog/example_test.go",
+		       "file": "go.nownabe.dev/clog/example_test.go",
 		       "line": "116",
 		       "function": "main.RequestHandler"
 		     },
@@ -158,7 +158,7 @@ func Example() {
 	     "severity": "NOTICE",
 	     "message": "app started",
 	     "logging.googleapis.com/sourceLocation": {
-	       "file": "github.com/nownabe/clog/example_test.go",
+	       "file": "go.nownabe.dev/clog/example_test.go",
 	       "line": "92",
 	       "function": "main.Example"
 	     },
@@ -182,7 +182,7 @@ func Example() {
 	     "severity": "NOTICE",
 	     "message": "app finished",
 	     "logging.googleapis.com/sourceLocation": {
-	       "file": "github.com/nownabe/clog/tmp/example.go",
+	       "file": "go.nownabe.dev/clog/tmp/example.go",
 	       "line": "178",
 	       "function": "main.Example"
 	     },

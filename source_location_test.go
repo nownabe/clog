@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/nownabe/clog"
+	"go.nownabe.dev/clog"
 )
 
 func Test_sourceLocation(t *testing.T) {

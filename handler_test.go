@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"testing"
 
-	"github.com/nownabe/clog"
+	"go.nownabe.dev/clog"
 )
 
 func Test_WithHandleFunc(t *testing.T) {

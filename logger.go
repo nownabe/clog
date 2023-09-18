@@ -6,8 +6,8 @@ import (
 	"io"
 	"log/slog"
 
-	"github.com/nownabe/clog/errors"
-	"github.com/nownabe/clog/internal/keys"
+	"go.nownabe.dev/clog/errors"
+	"go.nownabe.dev/clog/internal/keys"
 )
 
 type Logger struct {

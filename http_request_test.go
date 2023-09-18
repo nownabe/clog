@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nownabe/clog"
+	"go.nownabe.dev/clog"
 )
 
 func Test_HTTPRequest(t *testing.T) {

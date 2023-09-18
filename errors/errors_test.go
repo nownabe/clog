@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/nownabe/clog/errors"
+	"go.nownabe.dev/clog/errors"
 )
 
 func TestNew(t *testing.T) {

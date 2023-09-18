@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"sync"
 
-	"github.com/nownabe/clog/internal/keys"
+	"go.nownabe.dev/clog/internal/keys"
 )
 
 type (

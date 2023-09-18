@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/nownabe/clog/internal/keys"
+	"go.nownabe.dev/clog/internal/keys"
 )
 
 type ctxKeyOperation struct{}

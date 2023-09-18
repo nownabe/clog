@@ -1,4 +1,4 @@
-module github.com/nownabe/clog
+module go.nownabe.dev/clog
 
 go 1.21
 

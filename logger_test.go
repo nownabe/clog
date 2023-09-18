@@ -9,8 +9,8 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/nownabe/clog"
-	"github.com/nownabe/clog/errors"
+	"go.nownabe.dev/clog"
+	"go.nownabe.dev/clog/errors"
 )
 
 const (
