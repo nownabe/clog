@@ -1,0 +1,66 @@
+run:
+  timeout: 5m
+output:
+  format: colored-line-number
+linters-settings:
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment
+      - shadow
+linters:
+  enable-all: true
+  disable:
+    - cyclop
+    - depguard
+    - errname
+    - gci
+    - gochecknoglobals
+    - gochecknoinits
+    - goerr113
+    - gomnd
+    - ireturn
+    - nlreturn
+    - paralleltest
+    - thelper
+    - varnamelen
+    - wrapcheck
+    - wsl
+
+    # Deprecated linters
+    - deadcode
+    - exhaustivestruct
+    - ifshort
+    - interfacer
+    - golint
+    - maligned
+    - nosnakecase
+    - varcheck
+    - scopelint
+    - structcheck
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - dogsled
+        - dupl
+        - errorlint
+        - exhaustruct
+        - forcetypeassert
+        - funlen
+        - gocognit
+        - testableexamples
+    - path: example.*_test\.go
+      linters:
+        - errcheck
+        - lll
+    - path: errors/errors_test\.go
+      linters:
+        - gocritic
+    - path: severity\.go
+      linters:
+        - exhaustive
+    - path: source_location\.go
+      linters:
+        - unparam

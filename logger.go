@@ -6,17 +6,18 @@ import (
 	"io"
 	"log/slog"
 
-	"github.com/nownabe/clog/errors"
-	"github.com/nownabe/clog/internal/keys"
+	"go.nownabe.dev/clog/errors"
+	"go.nownabe.dev/clog/internal/keys"
 )
 
 type Logger struct {
 	inner *slog.Logger
 }
 
-func New(w io.Writer, s Severity, json bool) *Logger {
+func New(w io.Writer, s Severity, json bool, opts ...Option) *Logger {
 	opt := &slog.HandlerOptions{
-		Level: s,
+		AddSource: false,
+		Level:     s,
 		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
 			a = replaceLevel(a)
 			a = replaceMessage(a)
@@ -29,6 +30,13 @@ func New(w io.Writer, s Severity, json bool) *Logger {
 		h = slog.NewJSONHandler(w, opt)
 	} else {
 		h = slog.NewTextHandler(w, opt)
+	}
+
+	h = newLabelsHandler(h)
+	h = newOperationHandler(h)
+
+	for _, o := range opts {
+		h = o.apply(h)
 	}
 
 	return &Logger{slog.New(h)}
@@ -174,16 +182,57 @@ func (l *Logger) With(args ...any) *Logger {
 	return &Logger{l.inner.With(args...)}
 }
 
+// WithHTTPRequest returns a Logger that includes the given httpRequest in each output operation.
+// See https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#HttpRequest
+func (l *Logger) WithHTTPRequest(req *HTTPRequest) *Logger {
+	return l.withAttrs(slog.Any(keys.HTTPRequest, req))
+}
+
+// WithInsertID returns a Logger that includes the given insertId in each output operation.
+// See https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry
+func (l *Logger) WithInsertID(id string) *Logger {
+	return l.withAttrs(slog.String(keys.InsertID, id))
+}
+
+// StartOperation returns a new context and a function to end the opration, starting the operation.
+// See https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#LogEntryOperation
+func (l *Logger) StartOperation(
+	ctx context.Context, s Severity, msg, id, producer string,
+) (context.Context, func(msg string)) {
+	return l.startOperation(ctx, s, msg, id, producer)
+}
+
 func (l *Logger) log(ctx context.Context, s Severity, msg string, args ...any) {
 	// skip [runtime.Callers, source, this function, clog exported function]
 	src := getSourceLocation(4)
 	l.logWithSource(ctx, s, src, msg, args...)
 }
 
+/*
 func (l *Logger) logAttrs(ctx context.Context, s Severity, msg string, attrs ...slog.Attr) {
 	// skip [runtime.Callers, source, this function, clog exported function]
 	src := getSourceLocation(4)
 	l.logAttrsWithSource(ctx, s, src, msg, attrs...)
+}
+*/
+
+func (l *Logger) startOperation(
+	ctx context.Context, s Severity, msg, id, producer string,
+) (context.Context, func(msg string)) {
+	// skip [runtime.Callers, getSourceLocation, this function, exported function]
+	src := getSourceLocation(4)
+
+	l.logAttrsWithSource(ctx, s, src, msg, slog.Group(keys.Operation, "id", id, "producer", producer, "first", true))
+
+	opCtx := context.WithValue(ctx, ctxKeyOperation{}, &operation{id, producer})
+
+	return opCtx, func(msg string) {
+		l.logAttrsWithSource(ctx, s, src, msg, slog.Group(keys.Operation, "id", id, "producer", producer, "last", true))
+	}
+}
+
+func (l *Logger) withAttrs(attrs ...slog.Attr) *Logger {
+	return &Logger{slog.New(l.inner.Handler().WithAttrs(attrs))}
 }
 
 func (l *Logger) err(ctx context.Context, s Severity, err error, args ...any) {
@@ -208,7 +257,9 @@ func (l *Logger) logWithSource(ctx context.Context, s Severity, src *sourceLocat
 	l.inner.Log(ctx, s, msg, args...)
 }
 
-func (l *Logger) logAttrsWithSource(ctx context.Context, s Severity, src *sourceLocation, msg string, attrs ...slog.Attr) {
+func (l *Logger) logAttrsWithSource(
+	ctx context.Context, s Severity, src *sourceLocation, msg string, attrs ...slog.Attr,
+) {
 	attrs = append(attrs, slog.Any(keys.SourceLocation, src))
 	l.inner.LogAttrs(ctx, s, msg, attrs...)
 }
@@ -224,10 +275,10 @@ func argsToAttrs(args []any) []slog.Attr {
 			if len(args) == 1 {
 				attrs = append(attrs, slog.String(badKey, x))
 				break
-			} else {
-				attrs = append(attrs, slog.Any(x, args[1]))
-				args = args[2:]
 			}
+
+			attrs = append(attrs, slog.Any(x, args[1]))
+			args = args[2:]
 		case slog.Attr:
 			attrs = append(attrs, x)
 			args = args[1:]

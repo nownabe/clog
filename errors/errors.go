@@ -4,12 +4,12 @@ Package errors provides errors with stack trace.
 package errors
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"runtime"
+	"strconv"
 )
-
-const stackBufSize = 1024
 
 // ErrorWithStack is an interface that has Stack method to provide stack trace of en error.
 // The format of stack should be same as runtime.Stack.
@@ -21,7 +21,7 @@ type ErrorWithStack interface {
 
 // New returns an error with stack.
 func New(text string) error {
-	return newWithStack(errors.New(text))
+	return newWithStack(errors.New(text), 1)
 }
 
 // NewWithoutStack returns an error without stack.
@@ -61,7 +61,7 @@ func Errorf(format string, args ...any) error {
 		return fmt.Errorf(format, args...)
 	}
 
-	return newWithStack(fmt.Errorf(format, args...))
+	return newWithStack(fmt.Errorf(format, args...), 1)
 }
 
 // ErrorfWithoutStack returns an error without stack.
@@ -77,7 +77,7 @@ func WithStack(err error) error {
 		return nil
 	}
 
-	return newWithStack(err)
+	return newWithStack(err, 1)
 }
 
 type withStack struct {
@@ -85,12 +85,34 @@ type withStack struct {
 	stack []byte
 }
 
-func newWithStack(err error) *withStack {
-	buf := make([]byte, stackBufSize)
-	n := runtime.Stack(buf, false)
+func newWithStack(err error, skip int) *withStack {
+	const numFrames = 32
+	pcs := [numFrames]uintptr{}
+
+	// skip [runtime.Callers, this function]
+	n := runtime.Callers(skip+2, pcs[:])
+
+	buf := bytes.Buffer{}
+	// Use dummy goroutine ID 0.
+	buf.WriteString("goroutine 0 [running]:\n")
+
+	frams := runtime.CallersFrames(pcs[:n])
+	for {
+		f, ok := frams.Next()
+		if !ok {
+			break
+		}
+		buf.WriteString(f.Function)
+		buf.WriteString("(...)\n\t")
+		buf.WriteString(f.File)
+		buf.Write([]byte{':'})
+		buf.WriteString(strconv.Itoa(f.Line))
+		buf.Write([]byte{'\n'})
+	}
+
 	return &withStack{
 		err:   err,
-		stack: buf[:n],
+		stack: buf.Bytes(),
 	}
 }
 
