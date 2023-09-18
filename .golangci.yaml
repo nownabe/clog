@@ -14,6 +14,7 @@ linters:
     - cyclop
     - depguard
     - errname
+    - gci
     - gochecknoglobals
     - gochecknoinits
     - goerr113

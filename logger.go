@@ -208,11 +208,13 @@ func (l *Logger) log(ctx context.Context, s Severity, msg string, args ...any) {
 	l.logWithSource(ctx, s, src, msg, args...)
 }
 
+/*
 func (l *Logger) logAttrs(ctx context.Context, s Severity, msg string, attrs ...slog.Attr) {
 	// skip [runtime.Callers, source, this function, clog exported function]
 	src := getSourceLocation(4)
 	l.logAttrsWithSource(ctx, s, src, msg, attrs...)
 }
+*/
 
 func (l *Logger) startOperation(
 	ctx context.Context, s Severity, msg, id, producer string,
