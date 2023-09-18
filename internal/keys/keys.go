@@ -13,5 +13,8 @@ const (
 	Operation      = apiPrefix + "operation"
 	Severity       = "severity"
 	SourceLocation = apiPrefix + "sourceLocation"
+	SpanID         = apiPrefix + "spanId"
 	StackTrace     = "stack_trace"
+	Trace          = apiPrefix + "trace"
+	TraceSampled   = apiPrefix + "trace_sampled"
 )

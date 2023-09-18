@@ -17,6 +17,9 @@ const (
 	keyLabels         = "logging.googleapis.com/labels"
 	keyOperation      = "logging.googleapis.com/operation"
 	keySourceLocation = "logging.googleapis.com/sourceLocation"
+	keySpanID         = "logging.googleapis.com/spanId"
+	keyTrace          = "logging.googleapis.com/trace"
+	keyTraceSampled   = "logging.googleapis.com/trace_sampled"
 )
 
 type (
