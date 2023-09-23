@@ -127,7 +127,11 @@ func (e *withStack) Unwrap() error {
 func (e *withStack) Format(s fmt.State, verb rune) {
 	switch verb {
 	case 'v':
-		fmt.Fprintf(s, "%v\n%s", e.err, e.stack)
+		if s.Flag('+') {
+			fmt.Fprintf(s, "%v\n%s", e.err, e.stack)
+		} else {
+			fmt.Fprint(s, e.Error())
+		}
 	case 's':
 		fmt.Fprint(s, e.Error())
 	case 'q':
