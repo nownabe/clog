@@ -14,6 +14,7 @@ import (
 )
 
 const (
+	keyInsertID       = "logging.googleapis.com/insertId"
 	keyLabels         = "logging.googleapis.com/labels"
 	keyOperation      = "logging.googleapis.com/operation"
 	keySourceLocation = "logging.googleapis.com/sourceLocation"
