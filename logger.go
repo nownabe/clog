@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"slices"
+	"strings"
 
 	"go.nownabe.dev/clog/errors"
 	"go.nownabe.dev/clog/internal/keys"
@@ -183,12 +185,21 @@ func (l *Logger) With(args ...any) *Logger {
 }
 
 // HTTPReq emits a log with the given [HTTPRequest].
+// The value of message field will be like "GET /foo HTTP/1.1".
 // If status >= 500, the log is at SeverityError.
 // Otherwise, the log is at SeverityInfo.
-func (l *Logger) HTTPReq(ctx context.Context, req *HTTPRequest, msg string, args ...any) {
+func (l *Logger) HTTPReq(ctx context.Context, req *HTTPRequest, args ...any) {
 	s := SeverityInfo
 	if req.Status >= 500 {
 		s = SeverityError
+	}
+	msg := strings.Join(
+		slices.DeleteFunc(
+			[]string{req.RequestMethod, req.RequestURL, req.Protocol},
+			func(s string) bool { return s == "" }),
+		" ")
+	if msg == "" {
+		msg = "HTTP request"
 	}
 	args = append(args, keys.HTTPRequest, req)
 	l.log(ctx, s, msg, args...)

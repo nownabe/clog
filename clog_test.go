@@ -508,15 +508,13 @@ func TestDefaultLogger_WithInsertID(t *testing.T) {
 }
 
 func TestDefaultLogger_HTTPReq(t *testing.T) {
-	msg := "msg"
-
 	tests := map[string]struct {
 		r    *clog.HTTPRequest
 		want map[string]any
 	}{
 		"empty": {
 			r:    &clog.HTTPRequest{},
-			want: buildWantLog("INFO", msg),
+			want: buildWantLog("INFO", "HTTP request"),
 		},
 		"full": {
 			r: &clog.HTTPRequest{
@@ -536,7 +534,7 @@ func TestDefaultLogger_HTTPReq(t *testing.T) {
 				CacheFillBytes:                 789,
 				Protocol:                       "HTTP/1.1",
 			},
-			want: buildWantLog("INFO", msg, "httpRequest", map[string]any{
+			want: buildWantLog("INFO", "GET https://example.com/foo HTTP/1.1", "httpRequest", map[string]any{
 				"requestMethod":                  "GET",
 				"requestUrl":                     "https://example.com/foo",
 				"requestSize":                    "123",
@@ -556,11 +554,11 @@ func TestDefaultLogger_HTTPReq(t *testing.T) {
 		},
 		"only requestMethod": {
 			r:    &clog.HTTPRequest{RequestMethod: "GET"},
-			want: buildWantLog("INFO", msg, "httpRequest", map[string]any{"requestMethod": "GET"}),
+			want: buildWantLog("INFO", "GET", "httpRequest", map[string]any{"requestMethod": "GET"}),
 		},
 		"internal error": {
 			r:    &clog.HTTPRequest{RequestMethod: "GET", Status: 500},
-			want: buildWantLog("ERROR", msg, "httpRequest", map[string]any{"requestMethod": "GET", "status": 500}),
+			want: buildWantLog("ERROR", "GET", "httpRequest", map[string]any{"requestMethod": "GET", "status": 500}),
 		},
 	}
 
@@ -570,7 +568,7 @@ func TestDefaultLogger_HTTPReq(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			w := setDefault(clog.SeverityInfo)
-			clog.HTTPReq(ctx, tt.r, msg)
+			clog.HTTPReq(ctx, tt.r)
 			w.assertLog(t, tt.want)
 		})
 	}
