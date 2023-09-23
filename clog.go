@@ -183,15 +183,16 @@ func With(args ...any) *Logger {
 }
 
 // HTTPReq emits a log with the given [HTTPRequest].
+// The value of message field will be like "GET /foo HTTP/1.1".
 // If status >= 500, the log is at SeverityError.
 // Otherwise, the log is at SeverityInfo.
-func HTTPReq(ctx context.Context, req *HTTPRequest, msg string, args ...any) {
+func HTTPReq(ctx context.Context, req *HTTPRequest, args ...any) {
 	s := SeverityInfo
 	if req.Status >= 500 {
 		s = SeverityError
 	}
 	args = append(args, keys.HTTPRequest, req)
-	Default().log(ctx, s, msg, args...)
+	Default().log(ctx, s, req.msg(), args...)
 }
 
 // WithInsertID returns a Logger that includes the given insertId in each output operation.

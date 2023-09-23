@@ -3,7 +3,9 @@ package clog
 import (
 	"fmt"
 	"log/slog"
+	"slices"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -83,4 +85,16 @@ func (r *HTTPRequest) LogValue() slog.Value {
 	}
 
 	return slog.GroupValue(attrs...)
+}
+
+func (r *HTTPRequest) msg() string {
+	msg := strings.Join(
+		slices.DeleteFunc(
+			[]string{r.RequestMethod, r.RequestURL, r.Protocol},
+			func(s string) bool { return s == "" }),
+		" ")
+	if msg == "" {
+		msg = "HTTP request"
+	}
+	return msg
 }
