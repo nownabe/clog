@@ -9,14 +9,15 @@ type HandleFunc func(context.Context, slog.Record) error
 
 func WithHandleFunc(f func(next HandleFunc) HandleFunc) Option {
 	return optionFunc(func(h slog.Handler) slog.Handler {
-		return &customHandler{h, f(h.Handle)}
+		return &customHandler{h, f, f(h.Handle)}
 	})
 }
 
 type customHandler struct {
 	slog.Handler
 
-	f HandleFunc
+	f func(next HandleFunc) HandleFunc
+	h HandleFunc
 }
 
 func (h *customHandler) Enabled(ctx context.Context, level slog.Level) bool {
@@ -24,13 +25,15 @@ func (h *customHandler) Enabled(ctx context.Context, level slog.Level) bool {
 }
 
 func (h *customHandler) Handle(ctx context.Context, r slog.Record) error {
-	return h.f(ctx, r)
+	return h.h(ctx, r)
 }
 
 func (h *customHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
-	return &customHandler{h.Handler.WithAttrs(attrs), h.f}
+	handler := h.Handler.WithAttrs(attrs)
+	return &customHandler{handler, h.f, h.f(handler.Handle)}
 }
 
 func (h *customHandler) WithGroup(group string) slog.Handler {
-	return &customHandler{h.Handler.WithGroup(group), h.f}
+	handler := h.Handler.WithGroup(group)
+	return &customHandler{handler, h.f, h.f(handler.Handle)}
 }
