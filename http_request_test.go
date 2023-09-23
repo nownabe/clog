@@ -8,10 +8,9 @@ import (
 	"go.nownabe.dev/clog"
 )
 
-func Test_HTTPRequest(t *testing.T) {
+func TestLogger_HTTPReq(t *testing.T) {
 	t.Parallel()
 
-	sev := "INFO"
 	msg := "msg"
 
 	tests := map[string]struct {
@@ -20,7 +19,7 @@ func Test_HTTPRequest(t *testing.T) {
 	}{
 		"empty": {
 			r:    &clog.HTTPRequest{},
-			want: buildWantLog(sev, msg),
+			want: buildWantLog("INFO", msg),
 		},
 		"full": {
 			r: &clog.HTTPRequest{
@@ -40,7 +39,7 @@ func Test_HTTPRequest(t *testing.T) {
 				CacheFillBytes:                 789,
 				Protocol:                       "HTTP/1.1",
 			},
-			want: buildWantLog(sev, msg, "httpRequest", map[string]any{
+			want: buildWantLog("INFO", msg, "httpRequest", map[string]any{
 				"requestMethod":                  "GET",
 				"requestUrl":                     "https://example.com/foo",
 				"requestSize":                    "123",
@@ -60,7 +59,11 @@ func Test_HTTPRequest(t *testing.T) {
 		},
 		"only requestMethod": {
 			r:    &clog.HTTPRequest{RequestMethod: "GET"},
-			want: buildWantLog(sev, msg, "httpRequest", map[string]any{"requestMethod": "GET"}),
+			want: buildWantLog("INFO", msg, "httpRequest", map[string]any{"requestMethod": "GET"}),
+		},
+		"internal error": {
+			r:    &clog.HTTPRequest{RequestMethod: "GET", Status: 500},
+			want: buildWantLog("ERROR", msg, "httpRequest", map[string]any{"requestMethod": "GET", "status": 500}),
 		},
 	}
 
@@ -72,13 +75,13 @@ func Test_HTTPRequest(t *testing.T) {
 			t.Parallel()
 
 			l, w := newLogger(clog.SeverityInfo)
-			l.WithHTTPRequest(tt.r).Info(ctx, msg)
+			l.HTTPReq(ctx, tt.r, msg)
 			w.assertLog(t, tt.want)
 		})
 	}
 }
 
-func ExampleWithHTTPRequest() {
+func ExampleHTTPReq() {
 	req := &clog.HTTPRequest{
 		RequestMethod:                  "GET",
 		RequestURL:                     "https://example.com/foo",
@@ -96,5 +99,5 @@ func ExampleWithHTTPRequest() {
 		CacheFillBytes:                 789,
 		Protocol:                       "HTTP/1.1",
 	}
-	clog.WithHTTPRequest(req).Info(context.Background(), "GET /foo")
+	clog.HTTPReq(context.Background(), req, "GET /foo")
 }

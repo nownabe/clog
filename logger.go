@@ -182,10 +182,16 @@ func (l *Logger) With(args ...any) *Logger {
 	return &Logger{l.inner.With(args...)}
 }
 
-// WithHTTPRequest returns a Logger that includes the given httpRequest in each output operation.
-// See https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#HttpRequest
-func (l *Logger) WithHTTPRequest(req *HTTPRequest) *Logger {
-	return l.withAttrs(slog.Any(keys.HTTPRequest, req))
+// HTTPReq emits a log with the given [HTTPRequest].
+// If status >= 500, the log is at SeverityError.
+// Otherwise, the log is at SeverityInfo.
+func (l *Logger) HTTPReq(ctx context.Context, req *HTTPRequest, msg string, args ...any) {
+	s := SeverityInfo
+	if req.Status >= 500 {
+		s = SeverityError
+	}
+	args = append(args, keys.HTTPRequest, req)
+	l.log(ctx, s, msg, args...)
 }
 
 // WithInsertID returns a Logger that includes the given insertId in each output operation.
