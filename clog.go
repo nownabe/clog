@@ -3,6 +3,7 @@ package clog
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 	"sync/atomic"
 )
@@ -16,6 +17,18 @@ func init() {
 // SetDefault makes l the default Logger.
 func SetDefault(l *Logger) {
 	defaultLogger.Store(l)
+}
+
+// SetOptions sets options to the default Logger.
+func SetOptions(opts ...Option) {
+	l := Default()
+
+	h := l.inner.Handler()
+	for _, o := range opts {
+		h = o.apply(h)
+	}
+
+	SetDefault(&Logger{slog.New(h)})
 }
 
 // Default returns the default Logger.

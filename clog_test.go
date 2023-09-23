@@ -21,6 +21,29 @@ func setDefault(s clog.Severity, opts ...clog.Option) *writer {
 	return w
 }
 
+func TestSetOptions(t *testing.T) {
+	type ctxkey struct{}
+
+	f := func(next clog.HandleFunc) clog.HandleFunc {
+		return (func(ctx context.Context, r slog.Record) error {
+			if userID, ok := ctx.Value(ctxkey{}).(string); ok {
+				r.AddAttrs(slog.String("user_id", userID))
+			}
+			return next(ctx, r)
+		})
+	}
+
+	w := setDefault(clog.SeverityInfo)
+	ctx := context.WithValue(context.Background(), ctxkey{}, "user1")
+
+	clog.Info(ctx, "msg1")
+	w.assertLog(t, buildWantLog("INFO", "msg1"))
+
+	clog.SetOptions(clog.WithHandleFunc(f))
+	clog.Info(ctx, "msg2")
+	w.assertLog(t, buildWantLog("INFO", "msg2", "user_id", "user1"))
+}
+
 func TestDefaltLogger_SimpleLogFuncs(t *testing.T) {
 	type logFn func(ctx context.Context, msg string, args ...any)
 
