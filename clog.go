@@ -6,6 +6,8 @@ import (
 	"log/slog"
 	"os"
 	"sync/atomic"
+
+	"go.nownabe.dev/clog/internal/keys"
 )
 
 var defaultLogger atomic.Value
@@ -180,10 +182,16 @@ func With(args ...any) *Logger {
 	return Default().With(args...)
 }
 
-// WithHTTPRequest returns a Logger that includes the given httpRequest in each output operation.
-// See https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#HttpRequest
-func WithHTTPRequest(req *HTTPRequest) *Logger {
-	return Default().WithHTTPRequest(req)
+// HTTPReq emits a log with the given [HTTPRequest].
+// If status >= 500, the log is at SeverityError.
+// Otherwise, the log is at SeverityInfo.
+func HTTPReq(ctx context.Context, req *HTTPRequest, msg string, args ...any) {
+	s := SeverityInfo
+	if req.Status >= 500 {
+		s = SeverityError
+	}
+	args = append(args, keys.HTTPRequest, req)
+	Default().log(ctx, s, msg, args...)
 }
 
 // WithInsertID returns a Logger that includes the given insertId in each output operation.
