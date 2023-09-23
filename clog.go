@@ -3,10 +3,9 @@ package clog
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 	"sync/atomic"
-
-	"log/slog"
 
 	"go.nownabe.dev/clog/internal/keys"
 )
