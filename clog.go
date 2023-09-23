@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"slices"
-	"strings"
 	"sync/atomic"
 
 	"go.nownabe.dev/clog/internal/keys"
@@ -193,16 +191,8 @@ func HTTPReq(ctx context.Context, req *HTTPRequest, args ...any) {
 	if req.Status >= 500 {
 		s = SeverityError
 	}
-	msg := strings.Join(
-		slices.DeleteFunc(
-			[]string{req.RequestMethod, req.RequestURL, req.Protocol},
-			func(s string) bool { return s == "" }),
-		" ")
-	if msg == "" {
-		msg = "HTTP request"
-	}
 	args = append(args, keys.HTTPRequest, req)
-	Default().log(ctx, s, msg, args...)
+	Default().log(ctx, s, req.msg(), args...)
 }
 
 // WithInsertID returns a Logger that includes the given insertId in each output operation.
