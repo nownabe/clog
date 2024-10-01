@@ -20,7 +20,7 @@ jobs:
           go-version: ${{ matrix.version }}
       - run: go mod download
       - run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
-      - uses: codecov/codecov-action@ab904c41d6ece82784817410c45d8b8c02684457 # v3
+      - uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   golangci-lint:
