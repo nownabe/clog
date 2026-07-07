@@ -1,6 +1,6 @@
 module go.nownabe.dev/clog
 
-go 1.21
+go 1.26.5
 
 require go.opentelemetry.io/otel/trace v1.23.1
 
